@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<!-- saved from url=(0036)https://www.rpsms.in/rpsms/plot.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Land Distance &amp; Area Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="./Land Distance &amp; Area Calculator_files/bootstrap.min.css" rel="stylesheet">
+
+<style>
+  body { background:#f8f9fa; }
+  input { font-size:14px; }
+  canvas { height:320px; }
+</style>
+</head>
+
+<body>
+
+<div class="container py-4">
+  <div class="card shadow-sm">
+    <div class="card-header fw-bold">
+      Distance &amp; Area Calculator (Bhunaksha / SHP)
+    </div>
+
+    <div class="card-body">
+
+      <p class="text-muted small mb-3">
+        Enter coordinates as <b>X, Y</b> (Assumption: <b>1 unit = 1 meter</b>)
+      </p>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h6 class="fw-bold">Left Side Points</h6>
+          <div id="leftPoints">
+      <input class="form-control mb-2" placeholder="Point 1 : X, Y" id="left1">
+    
+      <input class="form-control mb-2" placeholder="Point 2 : X, Y" id="left2">
+    
+      <input class="form-control mb-2" placeholder="Point 3 : X, Y" id="left3">
+    
+      <input class="form-control mb-2" placeholder="Point 4 : X, Y" id="left4">
+    
+      <input class="form-control mb-2" placeholder="Point 5 : X, Y" id="left5">
+    </div>
+        </div>
+
+        <div class="col-md-6">
+          <h6 class="fw-bold">Right Side Points</h6>
+          <div id="rightPoints">
+      <input class="form-control mb-2" placeholder="Point 1 : X, Y" id="right1">
+    
+      <input class="form-control mb-2" placeholder="Point 2 : X, Y" id="right2">
+    
+      <input class="form-control mb-2" placeholder="Point 3 : X, Y" id="right3">
+    
+      <input class="form-control mb-2" placeholder="Point 4 : X, Y" id="right4">
+    
+      <input class="form-control mb-2" placeholder="Point 5 : X, Y" id="right5">
+    </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary w-100 mt-3" onclick="calculate()">
+        Calculate
+      </button>
+
+      <div id="result" class="alert alert-info mt-3"><b>Left Distance</b><br>
+            107.483 m (352 ft 8 in)<br><br><b>Right Distance</b><br>
+            108.761 m (356 ft 10 in)<br><br><b>Approx Area</b><br>
+            Average Width: 108.12 m<br>
+            Length: 3.55 m<br>
+            Area: 4130.74 sq ft<br>
+            (9.483 decimal)</div>
+
+      <!-- CANVAS -->
+      <div class="mt-4">
+        <h6 class="fw-bold">Plot Preview</h6>
+        <canvas id="plotCanvas" width="800" height="320" class="border rounded bg-white w-100"></canvas>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- CREATE INPUTS ----------
+function createInputs(prefix) {
+  let html = "";
+  for (let i = 1; i <= 5; i++) {
+    html += `
+      <input class="form-control mb-2"
+             placeholder="Point ${i} : X, Y"
+             id="${prefix}${i}">
+    `;
+  }
+  document.getElementById(prefix + "Points").innerHTML = html;
+}
+createInputs("left");
+createInputs("right");
+
+// ---------- HELPERS ----------
+function parseXY(v) {
+  if (!v) return null;
+  let p = v.split(",");
+  if (p.length !== 2) return null;
+  let x = parseFloat(p[0].trim());
+  let y = parseFloat(p[1].trim());
+  if (isNaN(x) || isNaN(y)) return null;
+  return {x, y};
+}
+
+function dist(a, b) {
+  return Math.hypot(b.x - a.x, b.y - a.y);
+}
+
+function metersToFeetInches(m) {
+  let inches = Math.round(m * 39.3701);
+  let ft = Math.floor(inches / 12);
+  let inch = inches % 12;
+  return `${ft} ft ${inch} in`;
+}
+
+function sqftToDecimal(sqft) {
+  return (sqft / 435.6).toFixed(3);
+}
+
+function collectPoints(prefix) {
+  let pts = [];
+  for (let i = 1; i <= 5; i++) {
+    let p = parseXY(document.getElementById(prefix + i).value);
+    if (p) pts.push(p);
+  }
+  return pts;
+}
+
+// ---------- DRAW PLOT ----------
+function drawPlot(left, right) {
+  const canvas = document.getElementById("plotCanvas");
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (left.length < 2 || right.length < 2) return;
+
+  const pts = [...left, ...right];
+  let minX = Math.min(...pts.map(p => p.x));
+  let maxX = Math.max(...pts.map(p => p.x));
+  let minY = Math.min(...pts.map(p => p.y));
+  let maxY = Math.max(...pts.map(p => p.y));
+
+  const pad = 30;
+  const scaleX = (canvas.width - pad * 2) / (maxX - minX || 1);
+  const scaleY = (canvas.height - pad * 2) / (maxY - minY || 1);
+  const scale = Math.min(scaleX, scaleY);
+
+  function map(p) {
+    return {
+      x: pad + (p.x - minX) * scale,
+      y: canvas.height - (pad + (p.y - minY) * scale)
+    };
+  }
+
+  const l1 = map(left[0]), l2 = map(left[1]);
+  const r1 = map(right[0]), r2 = map(right[1]);
+
+  // Left line
+  ctx.strokeStyle = "#0d6efd";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(l1.x, l1.y);
+  ctx.lineTo(l2.x, l2.y);
+  ctx.stroke();
+
+  // Right line
+  ctx.strokeStyle = "#198754";
+  ctx.beginPath();
+  ctx.moveTo(r1.x, r1.y);
+  ctx.lineTo(r2.x, r2.y);
+  ctx.stroke();
+
+  // Connect top & bottom
+  ctx.strokeStyle = "#6c757d";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(l1.x, l1.y);
+  ctx.lineTo(r1.x, r1.y);
+  ctx.moveTo(l2.x, l2.y);
+  ctx.lineTo(r2.x, r2.y);
+  ctx.stroke();
+}
+
+// ---------- CALCULATE ----------
+function calculate() {
+  let left = collectPoints("left");
+  let right = collectPoints("right");
+
+  let out = "";
+
+  if (left.length >= 2) {
+    let d = dist(left[0], left[1]);
+    out += `<b>Left Distance</b><br>
+            ${d.toFixed(3)} m (${metersToFeetInches(d)})<br><br>`;
+  }
+
+  if (right.length >= 2) {
+    let d = dist(right[0], right[1]);
+    out += `<b>Right Distance</b><br>
+            ${d.toFixed(3)} m (${metersToFeetInches(d)})<br><br>`;
+  }
+
+  if (left.length >= 2 && right.length >= 2) {
+    let lw = dist(left[0], left[1]);
+    let rw = dist(right[0], right[1]);
+    let avgW = (lw + rw) / 2;
+
+    let lm = {x:(left[0].x+left[1].x)/2, y:(left[0].y+left[1].y)/2};
+    let rm = {x:(right[0].x+right[1].x)/2, y:(right[0].y+right[1].y)/2};
+    let len = dist(lm, rm);
+
+    let areaSqft = avgW * len * 10.7639;
+
+    out += `<b>Approx Area</b><br>
+            Average Width: ${avgW.toFixed(2)} m<br>
+            Length: ${len.toFixed(2)} m<br>
+            Area: ${areaSqft.toFixed(2)} sq ft<br>
+            (${sqftToDecimal(areaSqft)} decimal)`;
+  }
+
+  if (!out) out = "Please enter at least two valid points.";
+
+  const r = document.getElementById("result");
+  r.innerHTML = out;
+  r.classList.remove("d-none");
+
+  drawPlot(left, right);
+}
+</script>
+
+<script defer="" src="./Land Distance &amp; Area Calculator_files/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;b0acbeeb31a444c6a8931b7b0fa9b32b&quot;,&quot;r&quot;:1,&quot;server_timing&quot;:{&quot;name&quot;:{&quot;cfCacheStatus&quot;:true,&quot;cfEdge&quot;:true,&quot;cfExtPri&quot;:true,&quot;cfL4&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfSpeedBrain&quot;:true},&quot;location_startswith&quot;:null}}" crossorigin="anonymous"></script>
+
+
+</body></html>
