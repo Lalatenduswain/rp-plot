@@ -137,11 +137,28 @@ class LandCalculatorApp {
     const container = document.getElementById(`${side}Inputs`);
     if (!container) return;
 
+    // Save existing values before clearing
+    const existingValues = [];
+    const existingInputs = container.querySelectorAll('.coordinate-input');
+    existingInputs.forEach(input => {
+      existingValues.push(input.value);
+    });
+
     container.innerHTML = '';
 
     for (let i = 0; i < count; i++) {
       const inputGroup = this.createInputField(side, i);
       container.appendChild(inputGroup);
+
+      // Restore previous value if it existed
+      if (i < existingValues.length && existingValues[i]) {
+        const input = inputGroup.querySelector('.coordinate-input');
+        if (input) {
+          input.value = existingValues[i];
+          // Trigger validation to show correct state
+          this.validateInput(input);
+        }
+      }
     }
 
     this.currentInputCount[side] = count;
@@ -282,8 +299,36 @@ class LandCalculatorApp {
       return;
     }
 
-    // Recreate inputs with one less
-    this.createInputs(side, count - 1);
+    // Save existing values
+    const container = document.getElementById(`${side}Inputs`);
+    const existingInputs = container.querySelectorAll('.coordinate-input');
+    const existingValues = [];
+    existingInputs.forEach(input => {
+      existingValues.push(input.value);
+    });
+
+    // Remove the value at the specified index
+    existingValues.splice(index, 1);
+
+    // Clear and recreate with one less input
+    container.innerHTML = '';
+
+    for (let i = 0; i < count - 1; i++) {
+      const inputGroup = this.createInputField(side, i);
+      container.appendChild(inputGroup);
+
+      // Restore value
+      if (i < existingValues.length && existingValues[i]) {
+        const input = inputGroup.querySelector('.coordinate-input');
+        if (input) {
+          input.value = existingValues[i];
+          this.validateInput(input);
+        }
+      }
+    }
+
+    this.currentInputCount[side] = count - 1;
+    this.updatePointCounters();
   }
 
   /**
