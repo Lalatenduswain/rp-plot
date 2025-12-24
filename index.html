@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Land Distance & Area Calculator for Odisha land records (Bhunaksha/SHP)">
+  <meta name="theme-color" content="#0d6efd">
+  <title>Land Distance & Area Calculator</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="./Land Distance & Area Calculator_files/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+
+  <!-- Skip to main content for accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Screen reader announcements -->
+  <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Main App Container -->
+  <div class="app-container">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-icon btn-menu" id="menuBtn" aria-label="Toggle menu" title="Menu">
+          <i class="bi bi-list"></i>
+        </button>
+        <h1 class="app-title">
+          <span class="title-full">Land Distance & Area Calculator</span>
+          <span class="title-short">Plot Calc</span>
+        </h1>
+      </div>
+
+      <div class="header-center">
+        <!-- Project Selector -->
+        <div class="project-selector" id="projectSelector">
+          <button class="btn-project" id="projectDropdownBtn" aria-haspopup="true" aria-expanded="false">
+            <i class="bi bi-folder"></i>
+            <span class="project-name" id="currentProjectName">Default Project</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+
+          <!-- Project Dropdown Menu -->
+          <div class="project-dropdown" id="projectDropdown" role="menu" hidden>
+            <div class="dropdown-header">
+              <input
+                type="search"
+                class="form-control form-control-sm"
+                placeholder="Search projects..."
+                id="projectSearch"
+                aria-label="Search projects"
+              />
+            </div>
+            <div class="dropdown-body" id="projectList">
+              <!-- Projects will be populated here -->
+            </div>
+            <div class="dropdown-footer">
+              <button class="btn btn-sm btn-primary w-100" id="newProjectBtn">
+                <i class="bi bi-plus-lg"></i> New Project
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button class="btn-icon" id="historyBtn" aria-label="Toggle history panel" title="History">
+          <i class="bi bi-clock-history"></i>
+        </button>
+        <button class="btn-icon" id="settingsBtn" aria-label="Open settings" title="Settings">
+          <i class="bi bi-gear"></i>
+        </button>
+        <button class="btn-icon" id="helpBtn" aria-label="Help" title="Help">
+          <i class="bi bi-question-circle"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-main" id="main-content">
+
+      <!-- Control Panel (Inputs) -->
+      <aside class="control-panel" id="controlPanel">
+        <div class="panel-header">
+          <h2>Coordinate Input</h2>
+          <button class="btn-collapse" id="collapseControlBtn" aria-label="Collapse panel">
+            <i class="bi bi-chevron-down"></i>
+          </button>
+        </div>
+
+        <div class="panel-body">
+          <p class="text-muted small mb-3">
+            Enter coordinates as <b>X, Y</b> (Assumption: <b>1 unit = 1 meter</b>)
+          </p>
+
+          <!-- Tab Navigation -->
+          <ul class="nav nav-tabs mb-3" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="leftTab" data-bs-toggle="tab" data-bs-target="#leftPanel"
+                      type="button" role="tab" aria-controls="leftPanel" aria-selected="true">
+                Left Side
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="rightTab" data-bs-toggle="tab" data-bs-target="#rightPanel"
+                      type="button" role="tab" aria-controls="rightPanel" aria-selected="false">
+                Right Side
+              </button>
+            </li>
+          </ul>
+
+          <!-- Tab Content -->
+          <div class="tab-content">
+            <!-- Left Side Panel -->
+            <div class="tab-pane fade show active" id="leftPanel" role="tabpanel" aria-labelledby="leftTab">
+              <div class="coordinate-inputs" id="leftInputs">
+                <!-- Dynamic inputs will be generated here -->
+              </div>
+              <button class="btn btn-outline-primary btn-sm w-100 mt-2" id="addLeftPointBtn">
+                <i class="bi bi-plus-circle"></i> Add Point
+              </button>
+            </div>
+
+            <!-- Right Side Panel -->
+            <div class="tab-pane fade" id="rightPanel" role="tabpanel" aria-labelledby="rightTab">
+              <div class="coordinate-inputs" id="rightInputs">
+                <!-- Dynamic inputs will be generated here -->
+              </div>
+              <button class="btn btn-outline-primary btn-sm w-100 mt-2" id="addRightPointBtn">
+                <i class="bi bi-plus-circle"></i> Add Point
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <button class="btn btn-primary w-100" id="calculateBtn">
+            <i class="bi bi-calculator"></i> Calculate
+          </button>
+          <button class="btn btn-outline-secondary w-100 mt-2" id="clearAllBtn">
+            <i class="bi bi-x-circle"></i> Clear All
+          </button>
+        </div>
+      </aside>
+
+      <!-- Canvas Area -->
+      <section class="canvas-area">
+        <div class="canvas-header">
+          <h2>Plot Visualization</h2>
+          <div class="canvas-actions">
+            <button class="btn-icon" id="fitViewBtn" title="Fit to view" aria-label="Fit to view">
+              <i class="bi bi-arrows-fullscreen"></i>
+            </button>
+            <button class="btn-icon" id="downloadCanvasBtn" title="Download image" aria-label="Download plot as image">
+              <i class="bi bi-download"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="plotCanvas" width="800" height="600" aria-label="Land plot visualization"></canvas>
+
+          <!-- Floating Toolbar (Undo/Redo/Zoom) -->
+          <div class="canvas-toolbar">
+            <div class="toolbar-group">
+              <button class="btn-toolbar" id="undoBtn" disabled title="Undo (Ctrl+Z)" aria-label="Undo">
+                <i class="bi bi-arrow-counterclockwise"></i>
+              </button>
+              <button class="btn-toolbar" id="redoBtn" disabled title="Redo (Ctrl+Y)" aria-label="Redo">
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <div class="toolbar-group">
+              <button class="btn-toolbar" id="zoomInBtn" title="Zoom in" aria-label="Zoom in">
+                <i class="bi bi-zoom-in"></i>
+              </button>
+              <button class="btn-toolbar" id="zoomOutBtn" title="Zoom out" aria-label="Zoom out">
+                <i class="bi bi-zoom-out"></i>
+              </button>
+              <button class="btn-toolbar" id="resetZoomBtn" title="Reset zoom" aria-label="Reset zoom">
+                <i class="bi bi-arrows-angle-contract"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Measurement Labels Overlay -->
+          <div class="measurement-labels" id="measurementLabels"></div>
+        </div>
+      </section>
+
+      <!-- Results Panel -->
+      <aside class="results-panel" id="resultsPanel">
+        <div class="panel-header">
+          <h2>
+            <i class="bi bi-clipboard-data"></i>
+            Measurements
+          </h2>
+          <button class="btn-icon btn-sm" id="saveToHistoryBtn" title="Save to history" aria-label="Save measurement to history">
+            <i class="bi bi-bookmark-plus"></i>
+          </button>
+        </div>
+
+        <div class="panel-body">
+          <div id="resultsContent">
+            <div class="empty-state">
+              <i class="bi bi-calculator"></i>
+              <p>Enter coordinates and click Calculate</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <div class="btn-group w-100" role="group">
+            <button class="btn btn-outline-primary btn-sm" id="exportPDFBtn" disabled>
+              <i class="bi bi-file-earmark-pdf"></i> PDF
+            </button>
+            <button class="btn btn-outline-success btn-sm" id="exportExcelBtn" disabled>
+              <i class="bi bi-file-earmark-excel"></i> Excel
+            </button>
+            <button class="btn btn-outline-info btn-sm" id="exportCSVBtn" disabled>
+              <i class="bi bi-file-earmark-text"></i> CSV
+            </button>
+          </div>
+        </div>
+      </aside>
+
+    </main>
+
+    <!-- History Panel (Slide-in) -->
+    <aside class="history-panel" id="historyPanel">
+      <div class="panel-header">
+        <h2>
+          <i class="bi bi-clock-history"></i>
+          Measurement History
+        </h2>
+        <button class="btn-close" id="closeHistoryBtn" aria-label="Close history panel"></button>
+      </div>
+
+      <div class="panel-toolbar">
+        <input
+          type="search"
+          class="form-control form-control-sm"
+          placeholder="Search measurements..."
+          id="historySearch"
+          aria-label="Search measurements"
+        />
+        <div class="toolbar-actions">
+          <button class="btn btn-sm btn-outline-secondary" id="filterHistoryBtn" title="Filter">
+            <i class="bi bi-funnel"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-secondary" id="exportAllBtn" title="Export all">
+            <i class="bi bi-download"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <div class="history-list" id="historyList">
+          <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>No measurements yet</p>
+            <small>Calculations will appear here</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-footer">
+        <button class="btn btn-outline-danger btn-sm w-100" id="clearHistoryBtn">
+          <i class="bi bi-trash"></i> Clear All History
+        </button>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="settingsModalLabel">
+            <i class="bi bi-gear"></i> Settings
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+          <!-- Unit System -->
+          <div class="settings-section">
+            <h6>Measurement Units</h6>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="unitSystem" id="unitMetric" value="meters" checked>
+              <label class="form-check-label" for="unitMetric">
+                Metric (Meters, Square Meters)
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="unitSystem" id="unitImperial" value="feet">
+              <label class="form-check-label" for="unitImperial">
+                Imperial (Feet, Square Feet)
+              </label>
+            </div>
+          </div>
+
+          <!-- Display Options -->
+          <div class="settings-section">
+            <h6>Display Options</h6>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="showGrid" checked>
+              <label class="form-check-label" for="showGrid">
+                Show grid on canvas
+              </label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="showLabels" checked>
+              <label class="form-check-label" for="showLabels">
+                Show measurement labels
+              </label>
+            </div>
+          </div>
+
+          <!-- Theme -->
+          <div class="settings-section">
+            <h6>Theme</h6>
+            <select class="form-select" id="themeSelect">
+              <option value="light" selected>Light</option>
+              <option value="dark">Dark</option>
+              <option value="auto">Auto (System)</option>
+            </select>
+          </div>
+
+          <!-- Auto-save -->
+          <div class="settings-section">
+            <h6>Auto-save</h6>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="autoSave" checked>
+              <label class="form-check-label" for="autoSave">
+                Automatically save measurements to history
+              </label>
+            </div>
+          </div>
+
+          <!-- Data Management -->
+          <div class="settings-section">
+            <h6>Data Management</h6>
+            <button class="btn btn-outline-primary btn-sm w-100 mb-2" id="exportAllDataBtn">
+              <i class="bi bi-download"></i> Export All Data
+            </button>
+            <button class="btn btn-outline-secondary btn-sm w-100 mb-2" id="importDataBtn">
+              <i class="bi bi-upload"></i> Import Data
+            </button>
+            <input type="file" id="importDataFile" accept=".json" class="d-none">
+            <button class="btn btn-outline-danger btn-sm w-100" id="clearAllDataBtn">
+              <i class="bi bi-trash"></i> Clear All Data
+            </button>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Project Modal -->
+  <div class="modal fade" id="newProjectModal" tabindex="-1" aria-labelledby="newProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="newProjectModalLabel">
+            <i class="bi bi-folder-plus"></i> New Project
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="projectName" class="form-label">Project Name *</label>
+            <input type="text" class="form-control" id="projectName" placeholder="e.g., Agricultural Survey 2025" required>
+            <div class="invalid-feedback" id="projectNameError"></div>
+          </div>
+          <div class="mb-3">
+            <label for="projectDescription" class="form-label">Description (Optional)</label>
+            <textarea class="form-control" id="projectDescription" rows="3" placeholder="Brief description of this project"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="createProjectBtn">Create Project</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="helpModalLabel">
+            <i class="bi bi-question-circle"></i> Help & Keyboard Shortcuts
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6>How to Use</h6>
+          <ol>
+            <li>Enter coordinates for left and right side points in format: X, Y</li>
+            <li>Click "Calculate" to compute distances and area</li>
+            <li>View results and save to history</li>
+            <li>Export measurements as PDF, Excel, or CSV</li>
+          </ol>
+
+          <h6 class="mt-4">Keyboard Shortcuts</h6>
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <td><kbd>Ctrl</kbd> + <kbd>Z</kbd></td>
+                <td>Undo</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd> + <kbd>Y</kbd></td>
+                <td>Redo</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+                <td>Save to history</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd> + <kbd>H</kbd></td>
+                <td>Toggle history panel</td>
+              </tr>
+              <tr>
+                <td><kbd>Delete</kbd></td>
+                <td>Remove selected point</td>
+              </tr>
+              <tr>
+                <td><kbd>Esc</kbd></td>
+                <td>Close panels/modals</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h6 class="mt-4">About</h6>
+          <p class="small text-muted">
+            Land Distance & Area Calculator v1.0.0<br>
+            For Odisha land records (Bhunaksha/SHP)<br>
+            Assumption: 1 unit = 1 meter
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- External Libraries for Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- Application JavaScript (ES6 Modules) -->
+  <script type="module" src="js/main-enhanced.js"></script>
+
+</body>
+</html>
