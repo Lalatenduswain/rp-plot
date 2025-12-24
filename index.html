@@ -98,22 +98,26 @@
         </div>
 
         <div class="panel-body">
-          <p class="text-muted small mb-3">
-            Enter coordinates as <b>X, Y</b> (Assumption: <b>1 unit = 1 meter</b>)
-          </p>
+          <div class="alert alert-info mb-3" style="padding: 0.5rem 0.75rem;">
+            <i class="bi bi-info-circle"></i> Enter coordinates as <b>X, Y</b> (Assumption: <b>1 unit = 1 meter</b>)
+          </div>
 
-          <!-- Tab Navigation -->
-          <ul class="nav nav-tabs mb-3" role="tablist">
+          <!-- Enhanced Tab Navigation -->
+          <ul class="nav nav-tabs nav-tabs-enhanced mb-3" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="leftTab" data-bs-toggle="tab" data-bs-target="#leftPanel"
+              <button class="nav-link nav-link-left active" id="leftTab" data-bs-toggle="tab" data-bs-target="#leftPanel"
                       type="button" role="tab" aria-controls="leftPanel" aria-selected="true">
-                Left Side
+                <i class="bi bi-arrow-bar-left"></i>
+                <span class="tab-label">Left Side</span>
+                <span class="badge bg-primary" id="leftPointCount">0</span>
               </button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="rightTab" data-bs-toggle="tab" data-bs-target="#rightPanel"
+              <button class="nav-link nav-link-right" id="rightTab" data-bs-toggle="tab" data-bs-target="#rightPanel"
                       type="button" role="tab" aria-controls="rightPanel" aria-selected="false">
-                Right Side
+                <i class="bi bi-arrow-bar-right"></i>
+                <span class="tab-label">Right Side</span>
+                <span class="badge bg-success" id="rightPointCount">0</span>
               </button>
             </li>
           </ul>
@@ -122,6 +126,10 @@
           <div class="tab-content">
             <!-- Left Side Panel -->
             <div class="tab-pane fade show active" id="leftPanel" role="tabpanel" aria-labelledby="leftTab">
+              <div class="side-header side-header-left">
+                <i class="bi bi-geo-alt-fill"></i>
+                <strong>Left Boundary Points</strong>
+              </div>
               <div class="coordinate-inputs" id="leftInputs">
                 <!-- Dynamic inputs will be generated here -->
               </div>
@@ -132,6 +140,10 @@
 
             <!-- Right Side Panel -->
             <div class="tab-pane fade" id="rightPanel" role="tabpanel" aria-labelledby="rightTab">
+              <div class="side-header side-header-right">
+                <i class="bi bi-geo-alt-fill"></i>
+                <strong>Right Boundary Points</strong>
+              </div>
               <div class="coordinate-inputs" id="rightInputs">
                 <!-- Dynamic inputs will be generated here -->
               </div>

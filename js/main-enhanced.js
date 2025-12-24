@@ -145,6 +145,28 @@ class LandCalculatorApp {
     }
 
     this.currentInputCount[side] = count;
+    this.updatePointCounters();
+  }
+
+  /**
+   * Update point counter badges
+   */
+  updatePointCounters() {
+    const leftCount = this.currentInputCount.left || 0;
+    const rightCount = this.currentInputCount.right || 0;
+
+    const leftBadge = document.getElementById('leftPointCount');
+    const rightBadge = document.getElementById('rightPointCount');
+
+    if (leftBadge) {
+      leftBadge.textContent = leftCount;
+      leftBadge.classList.toggle('pulse', leftCount > 0);
+    }
+
+    if (rightBadge) {
+      rightBadge.textContent = rightCount;
+      rightBadge.classList.toggle('pulse', rightCount > 0);
+    }
   }
 
   /**

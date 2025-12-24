@@ -907,3 +907,308 @@ body {
     min-width: auto;
   }
 }
+
+/* ===== Enhanced Tab Navigation ===== */
+.nav-tabs-enhanced {
+  border-bottom: 3px solid var(--border-color);
+  margin-bottom: 1rem !important;
+}
+
+.nav-tabs-enhanced .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  font-size: 15px;
+  border: 2px solid transparent;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.nav-tabs-enhanced .nav-link i {
+  font-size: 1.2rem;
+}
+
+.nav-tabs-enhanced .nav-link .badge {
+  font-size: 11px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* Left Side Tab Styling */
+.nav-link-left {
+  color: #0066cc !important;
+}
+
+.nav-link-left:hover {
+  background: linear-gradient(to bottom, #e3f2fd 0%, #ffffff 100%);
+  border-color: #0066cc transparent transparent transparent;
+}
+
+.nav-link-left.active {
+  background: linear-gradient(to bottom, #e3f2fd 0%, #ffffff 100%);
+  border-color: #0066cc transparent transparent transparent;
+  border-bottom: 3px solid #ffffff;
+  margin-bottom: -3px;
+  color: #0066cc !important;
+}
+
+.nav-link-left.active::before {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #0066cc;
+}
+
+/* Right Side Tab Styling */
+.nav-link-right {
+  color: #198754 !important;
+}
+
+.nav-link-right:hover {
+  background: linear-gradient(to bottom, #d1f4e0 0%, #ffffff 100%);
+  border-color: #198754 transparent transparent transparent;
+}
+
+.nav-link-right.active {
+  background: linear-gradient(to bottom, #d1f4e0 0%, #ffffff 100%);
+  border-color: #198754 transparent transparent transparent;
+  border-bottom: 3px solid #ffffff;
+  margin-bottom: -3px;
+  color: #198754 !important;
+}
+
+.nav-link-right.active::before {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #198754;
+}
+
+/* Side Headers */
+.side-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  border-left: 4px solid;
+}
+
+.side-header i {
+  font-size: 1.1rem;
+}
+
+.side-header-left {
+  background: linear-gradient(to right, #e3f2fd 0%, #f8f9fa 100%);
+  border-left-color: #0066cc;
+  color: #0066cc;
+}
+
+.side-header-right {
+  background: linear-gradient(to right, #d1f4e0 0%, #f8f9fa 100%);
+  border-left-color: #198754;
+  color: #198754;
+}
+
+/* Enhanced Input Labels */
+.coordinate-inputs .input-group {
+  margin-bottom: 0.75rem;
+}
+
+.coordinate-inputs label {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.coordinate-inputs .form-control {
+  border-width: 2px;
+  font-size: 14px;
+  padding: 0.5rem 0.75rem;
+}
+
+.coordinate-inputs .form-control:focus {
+  border-width: 2px;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+/* Point Counter Badges */
+#leftPointCount {
+  background: linear-gradient(135deg, #0066cc 0%, #004499 100%) !important;
+  box-shadow: 0 2px 4px rgba(0, 102, 204, 0.3);
+}
+
+#rightPointCount {
+  background: linear-gradient(135deg, #198754 0%, #146c43 100%) !important;
+  box-shadow: 0 2px 4px rgba(25, 135, 84, 0.3);
+}
+
+/* Tab Responsive */
+@media (max-width: 767px) {
+  .nav-tabs-enhanced .nav-link {
+    padding: 0.6rem 1rem;
+    font-size: 14px;
+  }
+  
+  .nav-tabs-enhanced .nav-link .tab-label {
+    font-size: 13px;
+  }
+  
+  .side-header {
+    padding: 0.6rem 0.8rem;
+    font-size: 13px;
+  }
+}
+
+/* Dark Theme Support for Enhanced Tabs */
+[data-theme="dark"] .nav-tabs-enhanced {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .nav-link-left.active {
+  background: linear-gradient(to bottom, rgba(0, 102, 204, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
+  border-color: #4da6ff transparent transparent transparent;
+  color: #4da6ff !important;
+}
+
+[data-theme="dark"] .nav-link-left.active::before {
+  background: #4da6ff;
+}
+
+[data-theme="dark"] .nav-link-right.active {
+  background: linear-gradient(to bottom, rgba(25, 135, 84, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
+  border-color: #20c997 transparent transparent transparent;
+  color: #20c997 !important;
+}
+
+[data-theme="dark"] .nav-link-right.active::before {
+  background: #20c997;
+}
+
+[data-theme="dark"] .side-header-left {
+  background: linear-gradient(to right, rgba(0, 102, 204, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+  border-left-color: #4da6ff;
+  color: #4da6ff;
+}
+
+[data-theme="dark"] .side-header-right {
+  background: linear-gradient(to right, rgba(25, 135, 84, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+  border-left-color: #20c997;
+  color: #20c997;
+}
+
+/* Pulse animation for badges */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.badge.pulse {
+  animation: pulse 0.3s ease-in-out;
+}
+
+/* Enhanced Input Visibility */
+.coordinate-input-group {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: var(--bg-panel);
+  border: 2px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.coordinate-input-group:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
+  transform: translateY(-1px);
+}
+
+.coordinate-input-group .input-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--dark-color);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.coordinate-input-group .form-control {
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  border-width: 2px;
+  border-radius: 6px;
+}
+
+.coordinate-input-group .form-control:focus {
+  border-width: 2px;
+  transform: scale(1.01);
+}
+
+/* Left panel inputs */
+#leftPanel .coordinate-input-group {
+  border-left: 4px solid #0066cc;
+}
+
+#leftPanel .coordinate-input-group:hover {
+  border-left-color: #0066cc;
+  background: linear-gradient(to right, rgba(0, 102, 204, 0.02) 0%, transparent 100%);
+}
+
+#leftPanel .input-label {
+  color: #0066cc;
+}
+
+/* Right panel inputs */
+#rightPanel .coordinate-input-group {
+  border-left: 4px solid #198754;
+}
+
+#rightPanel .coordinate-input-group:hover {
+  border-left-color: #198754;
+  background: linear-gradient(to right, rgba(25, 135, 84, 0.02) 0%, transparent 100%);
+}
+
+#rightPanel .input-label {
+  color: #198754;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .coordinate-input-group {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .coordinate-input-group:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] #leftPanel .input-label {
+  color: #4da6ff;
+}
+
+[data-theme="dark"] #rightPanel .input-label {
+  color: #20c997;
+}
