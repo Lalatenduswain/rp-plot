@@ -1212,3 +1212,52 @@ body {
 [data-theme="dark"] #rightPanel .input-label {
   color: #20c997;
 }
+
+/* Point Status Display */
+.point-status {
+  padding: 0.5rem 0.75rem;
+  background: linear-gradient(to right, rgba(13, 110, 253, 0.05) 0%, rgba(25, 135, 84, 0.05) 100%);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.point-status small {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.point-status #statusLeftCount {
+  color: #0066cc;
+  font-weight: 700;
+}
+
+.point-status #statusRightCount {
+  color: #198754;
+  font-weight: 700;
+}
+
+#matchPointsBtn {
+  font-size: 11px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+#matchPointsBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(13, 202, 240, 0.3);
+}
+
+/* Dark theme */
+[data-theme="dark"] .point-status {
+  background: linear-gradient(to right, rgba(77, 166, 255, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .point-status #statusLeftCount {
+  color: #4da6ff;
+}
+
+[data-theme="dark"] .point-status #statusRightCount {
+  color: #20c997;
+}

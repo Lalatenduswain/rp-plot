@@ -155,6 +155,20 @@
         </div>
 
         <div class="panel-footer">
+          <!-- Point Count Status -->
+          <div class="point-status mb-2" id="pointStatus" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center">
+              <small class="text-muted">
+                <i class="bi bi-info-circle"></i> Point count:
+                <span id="statusLeftCount">0</span> left,
+                <span id="statusRightCount">0</span> right
+              </small>
+              <button class="btn btn-sm btn-outline-info" id="matchPointsBtn" style="display: none;" title="Add empty points to match counts">
+                <i class="bi bi-arrow-left-right"></i> Match
+              </button>
+            </div>
+          </div>
+
           <button class="btn btn-primary w-100" id="calculateBtn">
             <i class="bi bi-calculator"></i> Calculate
           </button>

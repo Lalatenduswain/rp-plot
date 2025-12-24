@@ -184,6 +184,75 @@ class LandCalculatorApp {
       rightBadge.textContent = rightCount;
       rightBadge.classList.toggle('pulse', rightCount > 0);
     }
+
+    // Update point status in footer
+    this.updatePointStatus(leftCount, rightCount);
+  }
+
+  /**
+   * Update point status display and match button
+   */
+  updatePointStatus(leftCount, rightCount) {
+    const statusDiv = document.getElementById('pointStatus');
+    const matchBtn = document.getElementById('matchPointsBtn');
+    const statusLeftCount = document.getElementById('statusLeftCount');
+    const statusRightCount = document.getElementById('statusRightCount');
+
+    if (!statusDiv || !matchBtn || !statusLeftCount || !statusRightCount) return;
+
+    // Update counts
+    statusLeftCount.textContent = leftCount;
+    statusRightCount.textContent = rightCount;
+
+    // Show status if either side has points
+    if (leftCount > 0 || rightCount > 0) {
+      statusDiv.style.display = 'block';
+
+      // Show match button only if counts differ and both have at least 1 point
+      if (leftCount !== rightCount && leftCount > 0 && rightCount > 0) {
+        matchBtn.style.display = 'inline-block';
+
+        // Update button text to show what will happen
+        const difference = Math.abs(leftCount - rightCount);
+        const targetSide = leftCount < rightCount ? 'left' : 'right';
+        matchBtn.innerHTML = `<i class="bi bi-arrow-left-right"></i> Add ${difference} to ${targetSide}`;
+      } else {
+        matchBtn.style.display = 'none';
+      }
+    } else {
+      statusDiv.style.display = 'none';
+    }
+  }
+
+  /**
+   * Match point counts by adding empty points to the side with fewer
+   */
+  matchPointCounts() {
+    const leftCount = this.currentInputCount.left || 0;
+    const rightCount = this.currentInputCount.right || 0;
+
+    if (leftCount === rightCount) {
+      this.toast.info('Point counts already match');
+      return;
+    }
+
+    if (leftCount < rightCount) {
+      // Add points to left to match right
+      this.createInputs('left', rightCount);
+      this.toast.success(`Added ${rightCount - leftCount} empty point(s) to Left side`);
+
+      // Switch to left tab to fill them
+      const leftTab = document.getElementById('leftTab');
+      if (leftTab) leftTab.click();
+    } else {
+      // Add points to right to match left
+      this.createInputs('right', leftCount);
+      this.toast.success(`Added ${leftCount - rightCount} empty point(s) to Right side`);
+
+      // Switch to right tab to fill them
+      const rightTab = document.getElementById('rightTab');
+      if (rightTab) rightTab.click();
+    }
   }
 
   /**
@@ -372,6 +441,12 @@ class LandCalculatorApp {
       addRightBtn.addEventListener('click', () => this.addInputField('right'));
     }
 
+    // Match points button
+    const matchPointsBtn = document.getElementById('matchPointsBtn');
+    if (matchPointsBtn) {
+      matchPointsBtn.addEventListener('click', () => this.matchPointCounts());
+    }
+
     // Undo/Redo buttons
     const undoBtn = document.getElementById('undoBtn');
     if (undoBtn) {
@@ -551,10 +626,35 @@ class LandCalculatorApp {
     const leftPoints = this.collectPoints('left');
     const rightPoints = this.collectPoints('right');
 
-    // Validate
-    if (leftPoints.length < 2 || rightPoints.length < 2) {
-      this.toast.warning('Please enter at least 2 points on each side');
+    // Enhanced validation with helpful messages
+    const leftCount = leftPoints.length;
+    const rightCount = rightPoints.length;
+
+    // Check minimum requirements
+    if (leftCount < 2 && rightCount < 2) {
+      this.toast.error('Please enter at least 2 points on both Left and Right sides');
       return;
+    }
+
+    if (leftCount < 2) {
+      this.toast.error(`Left side needs ${2 - leftCount} more point(s). Currently: ${leftCount}/2 minimum`);
+      // Auto-switch to left tab
+      const leftTab = document.getElementById('leftTab');
+      if (leftTab) leftTab.click();
+      return;
+    }
+
+    if (rightCount < 2) {
+      this.toast.error(`Right side needs ${2 - rightCount} more point(s). Currently: ${rightCount}/2 minimum`);
+      // Auto-switch to right tab
+      const rightTab = document.getElementById('rightTab');
+      if (rightTab) rightTab.click();
+      return;
+    }
+
+    // Warn if point counts don't match (but still allow calculation)
+    if (leftCount !== rightCount) {
+      this.toast.warning(`Point count mismatch: Left has ${leftCount} points, Right has ${rightCount} points. Results may vary.`, 4000);
     }
 
     // Calculate
